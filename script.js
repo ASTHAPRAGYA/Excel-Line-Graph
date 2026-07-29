@@ -1,292 +1,1044 @@
 // ======================================================
-// Temperature Report Generator
-// Part 1 - Read Workbook & Detect Inverters
+// Solar Inverter Temperature Analyzer
+// Complete Script
 // ======================================================
+
 
 let workbook = null;
+
 let workbookData = {};
 
-const HEADER_ROW = 1; // Excel Row 2 (0-based)
+let combinedData = [];
+
+let tempChart = null;
+
+
 
 const fileInput = document.getElementById("excelFile");
+
 const selectionCard = document.getElementById("selectionCard");
+
 const checkboxContainer = document.getElementById("checkboxContainer");
 
-fileInput.addEventListener("change", loadWorkbook);
+const generateBtn = document.getElementById("generateBtn");
+
+
+
 
 
 // ======================================================
-// Read Excel Workbook
+// Upload Excel
 // ======================================================
 
-function loadWorkbook(event){
+
+fileInput.addEventListener("change", function(event){
+
 
     const file = event.target.files[0];
 
-    if(!file) return;
 
-    workbookData = {};
-    checkboxContainer.innerHTML = "";
+    if(!file)
+        return;
+
+
 
     const reader = new FileReader();
 
+
+
     reader.onload = function(e){
+
 
         const data = new Uint8Array(e.target.result);
 
+
+
         workbook = XLSX.read(data,{
+
             type:"array"
+
         });
+
+
+
+        console.log(
+            "Workbook Loaded",
+            workbook.SheetNames
+        );
+
+
 
         detectSheets();
 
+
+
     };
+
+
 
     reader.readAsArrayBuffer(file);
 
-}
+
+
+});
+
+
+
+
+
 
 
 // ======================================================
-// Detect Valid Worksheets
+// Detect Sheets + Header Rows
 // ======================================================
+
 
 function detectSheets(){
 
+
+    workbookData = {};
+
     checkboxContainer.innerHTML="";
-    workbookData={};
+
 
 
     workbook.SheetNames.forEach(sheetName=>{
 
 
+        console.log(
+            "Checking:",
+            sheetName
+        );
+
+
+
         const sheet = workbook.Sheets[sheetName];
 
 
-        // Read complete sheet as rows
+
         const rows = XLSX.utils.sheet_to_json(sheet,{
+
             header:1,
+
             defval:""
+
         });
+
 
 
         let headerRow = -1;
 
 
-        // Search first 10 rows for headers
-        for(let i=0; i<Math.min(rows.length,10); i++){
+
+        // Search first 15 rows
+
+        for(
+            let i=0;
+            i<Math.min(rows.length,15);
+            i++
+        ){
 
 
-            const headers = rows[i].map(h=>
+            let headers = rows[i].map(h=>
 
-                h.toString()
-                .trim()
-                .replace(/\s+/g,"")
-                .toUpperCase()
+                normalizeHeader(h)
 
             );
+
 
 
             if(
 
                 headers.includes("TIMESTAMP") &&
+
                 headers.includes("TEMP1") &&
+
                 headers.includes("TEMP2")
 
             ){
 
                 headerRow=i;
+
                 break;
 
             }
 
+
+
         }
 
 
 
-        if(headerRow === -1){
 
-            console.log(sheetName,"Header not found");
+        if(headerRow===-1){
+
+
+            console.log(
+                sheetName,
+                "Header not found"
+            );
+
+
             return;
 
+
         }
 
 
 
-        // Convert data using detected header row
 
-        const json = XLSX.utils.sheet_to_json(sheet,{
+
+        console.log(
+
+            sheetName,
+
+            "Header row:",
+
+            headerRow+1
+
+        );
+
+
+
+
+
+        let rawData =
+        XLSX.utils.sheet_to_json(sheet,{
+
             range:headerRow,
+
             defval:""
+
         });
 
 
 
-        workbookData[sheetName]=json;
 
 
-        createCheckbox(sheetName,"TEMP1");
+        let cleanedData =
+        cleanSheetData(rawData);
 
-        createCheckbox(sheetName,"TEMP2");
 
 
-        console.log(
-            sheetName,
-            "Header found at Excel row",
-            headerRow+1
-        );
+
+
+        if(cleanedData.length>0){
+
+
+            workbookData[sheetName]=cleanedData;
+
+
+        }
+
+
+
 
 
     });
 
 
 
-    if(Object.keys(workbookData).length===0){
 
-        alert("No valid inverter worksheets found.");
+
+    console.log(
+        "Detected Inverters:",
+        workbookData
+    );
+
+
+
+
+    if(
+        Object.keys(workbookData).length===0
+    ){
+
+        alert(
+            "No inverter worksheets found."
+        );
 
         return;
 
     }
 
 
+
+
     buildSelectionTable();
 
-    selectionCard.classList.remove("hidden");
 
 
-}
-// ======================================================
-// Build Checkbox Table
-// ======================================================
+    selectionCard.classList.remove(
+        "hidden"
+    );
 
-function buildSelectionTable(){
 
-    checkboxContainer.innerHTML="";
-
-    const table=document.createElement("table");
-
-    table.style.width="100%";
-    table.style.borderCollapse="collapse";
-
-    table.innerHTML=`
-
-        <thead>
-
-            <tr>
-
-                <th style="padding:10px;border-bottom:2px solid #27A5AD;text-align:left;">
-                    Inverter
-                </th>
-
-                <th style="padding:10px;border-bottom:2px solid #27A5AD;">
-                    TEMP1
-                </th>
-
-                <th style="padding:10px;border-bottom:2px solid #27A5AD;">
-                    TEMP2
-                </th>
-
-            </tr>
-
-        </thead>
-
-        <tbody></tbody>
-
-    `;
-
-    const tbody=table.querySelector("tbody");
-
-    Object.keys(workbookData).forEach(inv=>{
-
-        const row=document.createElement("tr");
-
-        row.innerHTML=`
-
-            <td style="padding:12px;border-bottom:1px solid #ddd;">
-                ${inv}
-            </td>
-
-            <td style="text-align:center;border-bottom:1px solid #ddd;">
-
-                <input
-                    type="checkbox"
-                    value="${inv}|TEMP1"
-                >
-
-            </td>
-
-            <td style="text-align:center;border-bottom:1px solid #ddd;">
-
-                <input
-                    type="checkbox"
-                    value="${inv}|TEMP2"
-                >
-
-            </td>
-
-        `;
-
-        tbody.appendChild(row);
-
-    });
-
-    checkboxContainer.appendChild(table);
 
 }
 
 
+
+
+
+
+
+
 // ======================================================
-// Return Selected Series
+// Normalize Header Names
 // ======================================================
 
-function getSelectedSeries(){
 
-    const selected=[];
+function normalizeHeader(value){
 
-    document
-        .querySelectorAll("#checkboxContainer input:checked")
-        .forEach(box=>{
 
-            const values=box.value.split("|");
+    return value
+    .toString()
+    .trim()
+    .replace(/\s+/g,"")
+    .toUpperCase();
 
-            selected.push({
 
-                inverter:values[0],
+}
 
-                temperature:values[1]
 
-            });
+
+
+
+
+
+// ======================================================
+// Clean Data
+// Converts headers into standard format
+// ======================================================
+
+
+function cleanSheetData(data){
+
+
+
+    return data.map(row=>{
+
+
+        let newRow={};
+
+
+
+        Object.keys(row).forEach(key=>{
+
+
+            let clean =
+            normalizeHeader(key);
+
+
+
+            if(clean==="TIMESTAMP"){
+
+                newRow["Time Stamp"]
+                =
+                row[key];
+
+            }
+
+
+
+            else if(clean==="TEMP1"){
+
+                newRow["TEMP1"]
+                =
+                Number(row[key]);
+
+            }
+
+
+
+            else if(clean==="TEMP2"){
+
+                newRow["TEMP2"]
+                =
+                Number(row[key]);
+
+            }
+
+
 
         });
 
-    return selected;
+
+
+        return newRow;
+
+
+
+    })
+    .filter(row=>
+
+        row["Time Stamp"]
+
+    );
+
+
 
 }
+
+
+
+
+
+
+
+
+
+// ======================================================
+// Build Selection Table
+// ======================================================
+
+
+function buildSelectionTable(){
+
+
+    checkboxContainer.innerHTML="";
+
+
+
+    let table=document.createElement("table");
+
+
+
+    table.style.width="100%";
+
+    table.innerHTML=`
+
+    <tr>
+
+    <th>
+    Inverter
+    </th>
+
+    <th>
+    TEMP1
+    </th>
+
+    <th>
+    TEMP2
+    </th>
+
+
+    </tr>
+
+    `;
+
+
+
+
+
+    Object.keys(workbookData)
+    .forEach(inv=>{
+
+
+        let row=document.createElement("tr");
+
+
+
+        row.innerHTML=`
+
+        <td>
+        ${inv}
+        </td>
+
+
+        <td>
+
+        <input 
+        type="checkbox"
+        value="${inv}|TEMP1">
+
+        </td>
+
+
+        <td>
+
+        <input 
+        type="checkbox"
+        value="${inv}|TEMP2">
+
+        </td>
+
+        `;
+
+
+
+        table.appendChild(row);
+
+
+
+    });
+
+
+
+
+    checkboxContainer.appendChild(table);
+
+
+
+}
+
+
+
+
+
+
+
+
+
+// ======================================================
+// Get Selected Channels
+// ======================================================
+
+
+function getSelectedSeries(){
+
+
+    let selected=[];
+
+
+
+    document
+    .querySelectorAll(
+        "#checkboxContainer input:checked"
+    )
+    .forEach(box=>{
+
+
+        let values =
+        box.value.split("|");
+
+
+
+        selected.push({
+
+            inverter:values[0],
+
+            temperature:values[1]
+
+        });
+
+
+
+    });
+
+
+
+    return selected;
+
+
+}
+
+
+
+
+
+
+
 
 
 // ======================================================
 // Generate Button
 // ======================================================
 
-document.getElementById("generateBtn")
-.addEventListener("click",()=>{
 
-    const selected=getSelectedSeries();
+generateBtn.addEventListener(
+"click",
+function(){
+
+
+    let selected =
+    getSelectedSeries();
+
+
 
     if(selected.length===0){
 
-        alert("Please select at least one temperature.");
+
+        alert(
+            "Select at least one temperature."
+        );
+
 
         return;
 
+
     }
 
-    console.log(selected);
 
-    console.log(workbookData);
 
-    // Part 2 starts here
-    // generateWorkbook(selected);
+    createCombinedData();
 
-});
+
+
+    createChart(selected);
+
+
+
+}
+
+);
+
+
+
+
+
+
+
+
+
+// ======================================================
+// Create Combined Dataset
+// ======================================================
+
+
+function createCombinedData(){
+
+
+
+    combinedData=[];
+
+
+
+    let timeSet=new Set();
+
+
+
+
+
+    Object.keys(workbookData)
+    .forEach(inv=>{
+
+
+        workbookData[inv]
+        .forEach(row=>{
+
+
+            timeSet.add(
+
+                new Date(
+                    row["Time Stamp"]
+                ).getTime()
+
+            );
+
+
+        });
+
+
+    });
+
+
+
+
+
+
+    let times =
+    Array.from(timeSet)
+    .sort(
+        (a,b)=>a-b
+    );
+
+
+
+
+
+    times.forEach(time=>{
+
+
+        let obj={};
+
+
+        obj["Time Stamp"]=
+        new Date(time);
+
+
+
+
+        Object.keys(workbookData)
+        .forEach(inv=>{
+
+
+            obj[inv+" TEMP1"]="";
+
+            obj[inv+" TEMP2"]="";
+
+
+        });
+
+
+
+        combinedData.push(obj);
+
+
+
+    });
+
+
+
+
+
+
+    Object.keys(workbookData)
+    .forEach(inv=>{
+
+
+        workbookData[inv]
+        .forEach(row=>{
+
+
+            let t =
+            new Date(
+                row["Time Stamp"]
+            ).getTime();
+
+
+
+            let index =
+            times.indexOf(t);
+
+
+
+
+            if(index>=0){
+
+
+                combinedData[index]
+                [inv+" TEMP1"]
+                =
+                row["TEMP1"];
+
+
+
+                combinedData[index]
+                [inv+" TEMP2"]
+                =
+                row["TEMP2"];
+
+
+
+            }
+
+
+
+        });
+
+
+
+    });
+
+
+
+}
+
+
+
+
+
+
+
+
+
+// ======================================================
+// Create Chart
+// ======================================================
+
+
+function createChart(selected){
+
+
+
+    let datasets=[];
+
+
+
+    selected.forEach(item=>{
+
+
+        let key =
+        item.inverter+
+        " "+
+        item.temperature;
+
+
+
+
+        datasets.push({
+
+            label:key,
+
+
+            data:
+
+            combinedData.map(row=>({
+
+                x:row["Time Stamp"],
+
+                y:row[key]
+
+            })),
+
+
+
+            borderWidth:2,
+
+            pointRadius:0,
+
+            tension:0.1
+
+
+
+        });
+
+
+
+    });
+
+
+
+
+
+    if(tempChart){
+
+        tempChart.destroy();
+
+    }
+
+
+
+
+    let ctx =
+    document
+    .getElementById("tempChart")
+    .getContext("2d");
+
+
+
+
+
+
+    tempChart =
+    new Chart(ctx,{
+
+
+        type:"line",
+
+
+
+        data:{
+
+
+            datasets:datasets
+
+
+        },
+
+
+
+
+        options:{
+
+
+            responsive:true,
+
+
+            maintainAspectRatio:false,
+
+
+
+            parsing:false,
+
+
+
+            interaction:{
+
+
+                mode:"nearest",
+
+                intersect:false
+
+
+            },
+
+
+
+            plugins:{
+
+
+                legend:{
+
+                    position:"top"
+
+                },
+
+
+
+                zoom:{
+
+
+                    pan:{
+
+                        enabled:true,
+
+                        mode:"x"
+
+                    },
+
+
+                    zoom:{
+
+
+                        wheel:{
+
+                            enabled:true
+
+                        },
+
+
+                        pinch:{
+
+                            enabled:true
+
+                        },
+
+
+                        mode:"x"
+
+
+                    }
+
+
+
+                }
+
+
+
+            },
+
+
+
+
+
+            scales:{
+
+
+                x:{
+
+
+                    type:"time",
+
+
+                    time:{
+
+
+                        unit:
+                        calculateTimeUnit()
+
+
+                    }
+
+
+
+                },
+
+
+
+
+                y:{
+
+
+                    title:{
+
+
+                        display:true,
+
+                        text:
+                        "Temperature (°C)"
+
+                    }
+
+
+
+                }
+
+
+
+            }
+
+
+
+        }
+
+
+
+    });
+
+
+
+
+
+    document
+    .getElementById("chartContainer")
+    .classList
+    .remove("hidden");
+
+
+
+}
+
+
+
+
+
+
+
+
+
+function calculateTimeUnit(){
+
+
+    if(combinedData.length===0)
+
+        return "hour";
+
+
+
+    let days =
+
+    (
+        combinedData[
+        combinedData.length-1
+        ]["Time Stamp"]
+
+        -
+
+        combinedData[0]
+        ["Time Stamp"]
+
+    )
+
+    /
+    (1000*60*60*24);
+
+
+
+
+
+    if(days<=1)
+
+        return "hour";
+
+
+    if(days<=7)
+
+        return "6hour";
+
+
+
+    return "day";
+
+
+}
