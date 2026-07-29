@@ -1095,21 +1095,10 @@ console.log("Graph End:",maxDate);
 
 
                         maxTicksLimit:8
-
-
                     }
-
-
                 }
-
-
-
             }
-
-
-
-
-        }
+}
 
 
 
