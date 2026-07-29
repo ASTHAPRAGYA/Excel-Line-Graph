@@ -60,47 +60,70 @@ function detectSheets(){
 
     const sheets = workbook.SheetNames;
 
+    checkboxContainer.innerHTML="";
+    workbookData={};
+
     sheets.forEach(sheetName=>{
 
-        const sheet = workbook.Sheets[sheetName];
+        const ws = workbook.Sheets[sheetName];
 
-        const json = XLSX.utils.sheet_to_json(sheet,{
-
+        // Convert sheet to array instead of JSON
+        const rows = XLSX.utils.sheet_to_json(ws,{
+            header:1,
             defval:""
-
         });
 
-        if(json.length===0){
+        if(rows.length===0) return;
 
+        let headerRow=-1;
+
+        // Search first 20 rows for headers
+        for(let r=0;r<Math.min(20,rows.length);r++){
+
+            const headers=rows[r].map(x=>
+                x.toString()
+                 .trim()
+                 .replace(/\s+/g,"")
+                 .toUpperCase()
+            );
+
+            if(
+                headers.includes("TIMESTAMP") &&
+                headers.includes("TEMP1") &&
+                headers.includes("TEMP2")
+            ){
+
+                headerRow=r;
+                break;
+
+            }
+
+        }
+
+        if(headerRow==-1){
+
+            console.log(sheetName+" skipped");
             return;
 
         }
 
-        const headers = Object.keys(json[0]);
+        const json=XLSX.utils.sheet_to_json(ws,{
+            range:headerRow,
+            defval:""
+        });
 
-        if(
+        workbookData[sheetName]=json;
 
-            headers.includes("Time Stamp") &&
-
-            headers.includes("TEMP1") &&
-
-            headers.includes("TEMP2")
-
-        ){
-
-            workbookData[sheetName]=json;
-
-            createCheckbox(sheetName,"TEMP1");
-
-            createCheckbox(sheetName,"TEMP2");
-
-        }
+        createCheckbox(sheetName,"TEMP1");
+        createCheckbox(sheetName,"TEMP2");
 
     });
 
+    console.log(workbookData);
+
     if(Object.keys(workbookData).length===0){
 
-        alert("No valid inverter worksheets found.");
+        alert("No valid worksheets found.");
 
         return;
 
@@ -109,7 +132,6 @@ function detectSheets(){
     selectionCard.classList.remove("hidden");
 
 }
-
 
 //----------------------------------------
 // Create Checkbox
