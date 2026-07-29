@@ -1092,3 +1092,315 @@ function createChart(selected){
 
 
 }
+// ======================================================
+// PART 2 - EXPORT EXCEL REPORT
+// ======================================================
+
+
+const downloadBtn =
+document.getElementById("downloadBtn");
+
+
+
+
+
+downloadBtn.addEventListener(
+"click",
+async function(){
+
+
+    await exportExcelReport();
+
+
+});
+
+
+
+
+
+
+
+// ======================================================
+// Create Final Excel Workbook
+// ======================================================
+
+
+async function exportExcelReport(){
+
+
+    if(combinedData.length===0){
+
+
+        alert(
+            "Generate graph before downloading."
+        );
+
+
+        return;
+
+
+    }
+
+
+
+    const newWorkbook =
+    new ExcelJS.Workbook();
+
+
+
+
+    // --------------------------------------------------
+    // Copy Original Worksheets
+    // --------------------------------------------------
+
+
+    workbook.SheetNames.forEach(sheetName=>{
+
+
+        let oldSheet =
+        workbook.Sheets[sheetName];
+
+
+
+        let json =
+        XLSX.utils.sheet_to_json(
+            oldSheet,
+            {
+                header:1
+            }
+        );
+
+
+
+        let newSheet =
+        newWorkbook.addWorksheet(
+            sheetName
+        );
+
+
+
+        json.forEach(row=>{
+
+
+            newSheet.addRow(row);
+
+
+        });
+
+
+
+    });
+
+
+
+
+
+
+    // --------------------------------------------------
+    // Combined Temperature Worksheet
+    // --------------------------------------------------
+
+
+    let combinedSheet =
+    newWorkbook.addWorksheet(
+        "Combined Temperature"
+    );
+
+
+
+
+    if(combinedData.length>0){
+
+
+
+        let headers =
+        Object.keys(
+            combinedData[0]
+        );
+
+
+
+        combinedSheet.addRow(headers);
+
+
+
+
+        combinedData.forEach(row=>{
+
+
+            combinedSheet.addRow(
+
+                headers.map(header=>
+
+                    row[header]
+
+                )
+
+            );
+
+
+        });
+
+
+
+    }
+
+
+
+
+
+    // Formatting
+
+    combinedSheet.freezePane = "A2";
+
+
+    combinedSheet.columns.forEach(column=>{
+
+
+        column.width=18;
+
+
+    });
+
+
+
+
+
+
+
+    // --------------------------------------------------
+    // Temperature Graph Worksheet
+    // --------------------------------------------------
+
+
+    let graphSheet =
+    newWorkbook.addWorksheet(
+        "Temperature Graph"
+    );
+
+
+
+    graphSheet.getCell("A1")
+    .value =
+    "Temperature Trend Graph";
+
+
+
+    graphSheet.getCell("A3")
+    .value =
+    "Generated from selected inverter temperatures";
+
+
+
+
+
+
+    // Convert Chart to Image
+
+
+    let chartCanvas =
+    document.getElementById(
+        "tempChart"
+    );
+
+
+
+    let imageData =
+    chartCanvas.toDataURL(
+        "image/png"
+    );
+
+
+
+
+    let imageId =
+    newWorkbook.addImage({
+
+        base64:imageData,
+
+        extension:"png"
+
+    });
+
+
+
+
+
+
+    graphSheet.addImage(
+        imageId,
+        {
+
+            tl:{
+                col:0,
+                row:4
+            },
+
+
+            ext:{
+
+                width:900,
+
+                height:450
+
+            }
+
+
+        }
+
+    );
+
+
+
+
+
+
+
+    // --------------------------------------------------
+    // Download File
+    // --------------------------------------------------
+
+
+    const buffer =
+    await newWorkbook.xlsx.writeBuffer();
+
+
+
+    const blob =
+    new Blob(
+        [buffer],
+        {
+            type:
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        }
+    );
+
+
+
+    const url =
+    URL.createObjectURL(blob);
+
+
+
+    const a =
+    document.createElement("a");
+
+
+
+    a.href=url;
+
+
+    a.download =
+    "Solar_Temperature_Report.xlsx";
+
+
+
+    a.click();
+
+
+
+    URL.revokeObjectURL(url);
+
+
+
+}
