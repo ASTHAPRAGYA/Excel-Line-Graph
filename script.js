@@ -585,10 +585,10 @@ function createCombinedData(){
 
             times.add(
 
-                new Date(
-                    row["Time Stamp"]
-                )
-                .getTime()
+               convertExcelDate(
+    row["Time Stamp"]
+)
+.getTime()
 
             );
 
@@ -658,10 +658,10 @@ function createCombinedData(){
 
             let time =
 
-            new Date(
-                data["Time Stamp"]
-            )
-            .getTime();
+           convertExcelDate(
+    data["Time Stamp"]
+)
+.getTime();
 
 
 
@@ -1055,7 +1055,7 @@ console.log("Graph End:",maxDate);
 
     source:"auto"
 
-}
+},
 
 
 
@@ -1139,15 +1139,17 @@ document.getElementById("downloadBtn");
 
 
 
-downloadBtn.addEventListener(
-"click",
-async function(){
+if(downloadBtn){
 
+    downloadBtn.addEventListener(
+    "click",
+    async function(){
 
-    await exportExcelReport();
+        await exportExcelReport();
 
+    });
 
-});
+}
 
 
 
@@ -1301,46 +1303,6 @@ async function exportExcelReport(){
 
 
 
-// ======================================================
-// Decide X-axis time interval
-// ======================================================
-
-function calculateTimeUnit(minDate,maxDate){
-
-
-    let hours = 
-    (
-        maxDate - minDate
-    )
-    /
-    (1000 * 60 * 60);
-
-
-
-    if(hours <= 24){
-
-        return "hour";
-
-    }
-
-
-
-    else if(hours <= 168){
-
-        return "day";
-
-    }
-
-
-
-    else{
-
-        return "day";
-
-    }
-
-
-}
 
     // --------------------------------------------------
     // Temperature Graph Worksheet
@@ -1478,3 +1440,83 @@ function calculateTimeUnit(minDate,maxDate){
 
 
 }
+// ======================================================
+// Convert Excel Timestamp Correctly
+// ======================================================
+
+function convertExcelDate(value){
+
+
+    if(typeof value === "number"){
+
+
+        let date =
+        XLSX.SSF.parse_date_code(value);
+
+
+
+        return new Date(
+
+            date.y,
+
+            date.m-1,
+
+            date.d,
+
+            date.H,
+
+            date.M,
+
+            date.S
+
+        );
+
+
+    }
+
+
+    return new Date(value);
+
+
+}
+// ======================================================
+// Decide X-axis time interval
+// ======================================================
+
+function calculateTimeUnit(minDate,maxDate){
+
+
+    let hours = 
+    (
+        maxDate - minDate
+    )
+    /
+    (1000 * 60 * 60);
+
+
+
+    if(hours <= 24){
+
+        return "hour";
+
+    }
+
+
+
+    else if(hours <= 168){
+
+        return "day";
+
+    }
+
+
+
+    else{
+
+        return "day";
+
+    }
+
+
+}
+
