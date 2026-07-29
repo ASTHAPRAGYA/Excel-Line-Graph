@@ -719,7 +719,25 @@ function createCombinedData(){
 // Create Chart
 // ======================================================
 
+// ======================================================
+// Create Advanced Temperature Chart
+// ======================================================
+
 function createChart(selected){
+
+
+    const colors = [
+
+        "#27A5AD",
+        "#FF6384",
+        "#36A2EB",
+        "#FFCE56",
+        "#9966FF",
+        "#4BC0C0",
+        "#FF9F40",
+        "#8BC34A"
+
+    ];
 
 
 
@@ -727,13 +745,38 @@ function createChart(selected){
 
 
 
-    selected.forEach(item=>{
+    selected.forEach((item,index)=>{
 
 
         let key =
-        item.inverter+
-        " "+
+        item.inverter +
+        " " +
         item.temperature;
+
+
+
+        let dataPoints = combinedData
+        .map(row=>{
+
+
+            return {
+
+                x: row["Time Stamp"],
+
+                y: row[key]
+
+            };
+
+
+        })
+        .filter(point=>
+
+            point.y !== "" &&
+            point.y !== null &&
+            point.y !== undefined &&
+            !isNaN(point.y)
+
+        );
 
 
 
@@ -744,28 +787,31 @@ function createChart(selected){
             label:key,
 
 
-            data:
-
-            combinedData.map(row=>({
+            data:dataPoints,
 
 
-                x:
-                row["Time Stamp"],
+            borderColor:
+            colors[index % colors.length],
 
 
-                y:
-                row[key]
-
-
-            })),
+            backgroundColor:
+            colors[index % colors.length],
 
 
 
             borderWidth:2,
 
+
             pointRadius:0,
 
-            tension:0.1
+
+            pointHoverRadius:5,
+
+
+            tension:0.15,
+
+
+            fill:false
 
 
 
@@ -774,7 +820,6 @@ function createChart(selected){
 
 
     });
-
 
 
 
@@ -790,22 +835,28 @@ function createChart(selected){
 
 
 
-    tempChart =
-    new Chart(
+
+    tempChart = new Chart(
 
         document
         .getElementById("tempChart"),
 
+
         {
+
 
         type:"line",
 
 
+
         data:{
+
 
             datasets:datasets
 
+
         },
+
 
 
         options:{
@@ -817,7 +868,24 @@ function createChart(selected){
             maintainAspectRatio:false,
 
 
+
             parsing:false,
+
+
+
+            animation:false,
+
+
+
+            interaction:{
+
+
+                mode:"nearest",
+
+                intersect:false
+
+
+            },
 
 
 
@@ -826,9 +894,57 @@ function createChart(selected){
 
                 legend:{
 
+
                     position:"top"
 
+
+
                 },
+
+
+
+                tooltip:{
+
+
+                    callbacks:{
+
+
+                        title:function(context){
+
+
+                            return new Date(
+                                context[0].parsed.x
+                            )
+                            .toLocaleString();
+
+
+                        },
+
+
+                        label:function(context){
+
+
+                            return (
+
+                                context.dataset.label
+                                +
+                                ": "
+                                +
+                                context.parsed.y
+                                +
+                                " °C"
+
+                            );
+
+
+                        }
+
+
+                    }
+
+
+                },
+
 
 
                 zoom:{
@@ -836,23 +952,39 @@ function createChart(selected){
 
                     pan:{
 
+
                         enabled:true,
 
                         mode:"x"
 
+
                     },
+
 
 
                     zoom:{
 
+
                         wheel:{
 
+
                             enabled:true
+
+
+                        },
+
+
+                        pinch:{
+
+
+                            enabled:true
+
 
                         },
 
 
                         mode:"x"
+
 
                     }
 
@@ -873,6 +1005,7 @@ function createChart(selected){
                     type:"time",
 
 
+
                     time:{
 
 
@@ -880,10 +1013,23 @@ function createChart(selected){
                         "dd MMM yyyy HH:mm"
 
 
+
+                    },
+
+
+
+                    ticks:{
+
+
+                        maxTicksLimit:15
+
+
                     }
 
 
+
                 },
+
 
 
 
@@ -895,11 +1041,28 @@ function createChart(selected){
 
                         display:true,
 
+
                         text:
                         "Temperature (°C)"
 
 
+                    },
+
+
+                    ticks:{
+
+
+                        callback:function(value){
+
+
+                            return value+" °C";
+
+
+                        }
+
+
                     }
+
 
 
                 }
