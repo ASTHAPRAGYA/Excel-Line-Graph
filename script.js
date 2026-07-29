@@ -762,8 +762,32 @@ function createChart(selected){
         .map(row=>{
 
 
-            let date =
-            new Date(row["Time Stamp"]);
+let rawTime = row["Time Stamp"];
+
+let date;
+
+
+if(typeof rawTime === "number"){
+
+    date = XLSX.SSF.parse_date_code(rawTime);
+
+    date = new Date(
+
+        date.y,
+        date.m-1,
+        date.d,
+        date.H,
+        date.M,
+        date.S
+
+    );
+
+}
+else{
+
+    date = new Date(rawTime);
+
+}
 
 
 
@@ -877,7 +901,8 @@ function createChart(selected){
         )
     );
 
-
+console.log("Graph Start:",minDate);
+console.log("Graph End:",maxDate);
 
 
 
@@ -1022,16 +1047,15 @@ function createChart(selected){
 
 
 
-                    ticks:{
+                   ticks:{
 
+    maxTicksLimit:7,
 
-                        maxTicksLimit:8,
+    autoSkip:true,
 
+    source:"auto"
 
-                        autoSkip:true
-
-
-                    },
+}
 
 
 
