@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Temperature Report Generator</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <!-- SheetJS -->
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
+
+    <!-- ExcelJS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.4.0/exceljs.min.js"></script>
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>Temperature Report Generator</h1>
+
+    <p class="subtitle">
+        Upload inverter temperature workbook and generate a consolidated report.
+    </p>
+
+    <div class="uploadBox">
+
+        <input
+            type="file"
+            id="excelFile"
+            accept=".xlsx,.xls"
+        >
+
+    </div>
+
+    <div id="selectionCard" class="hidden">
+
+        <h2>Select Temperatures</h2>
+
+        <p>
+            Choose the inverter temperature series you want to plot.
+        </p>
+
+        <div id="checkboxContainer">
+
+            <!-- JavaScript generates checkboxes -->
+
+        </div>
+
+        <button id="generateBtn">
+
+            Generate Report
+
+        </button>
+
+    </div>
+
+    <div id="progressCard" class="hidden">
+
+        <h2>Processing Workbook...</h2>
+
+        <div class="progressBar">
+
+            <div id="progressFill"></div>
+
+        </div>
+
+        <p id="progressText">
+
+            Waiting...
+
+        </p>
+
+    </div>
+
+    <div id="downloadCard" class="hidden">
+
+        <h2>Report Generated Successfully</h2>
+
+        <button id="downloadBtn">
+
+            Download Excel Report
+
+        </button>
+
+    </div>
+
+    <div class="footer">
+
+        Temperature Report Generator
+
+    </div>
+
+</div>
+
+<script src="script.js"></script>
+
+</body>
+
+</html>
