@@ -1028,83 +1028,59 @@ console.log("Graph End:",maxDate);
 
 
 
-            scales:{
-
-
+             scales:{
 
                 x:{
 
-
-
                     type:"time",
-
-
 
                     min:minDate,
 
-
                     max:maxDate,
 
+                    ticks:{
 
+                        maxTicksLimit:7,
 
-                   ticks:{
+                        autoSkip:true,
 
-    maxTicksLimit:7,
+                        source:"auto"
 
-    autoSkip:true,
-
-    source:"auto"
-
-},
-
-
+                    },
 
                     time:{
-
 
                         unit:
                         calculateTimeUnit(minDate,maxDate)
 
-
                     }
-
 
                 },
 
 
-
-
-
                 y:{
-
 
                     title:{
 
-
                         display:true,
 
-                        text:
-                        "Temperature (°C)"
-
+                        text:"Temperature (°C)"
 
                     },
 
-
-
                     ticks:{
 
-
                         maxTicksLimit:8
+
                     }
+
                 }
+
             }
-            }
-};
 
+        }
 
-
-
-
+    );
     document
     .getElementById("chartContainer")
     .classList
