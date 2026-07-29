@@ -6,66 +6,124 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Temperature Report Generator</title>
+    <title>
+        Solar Inverter Temperature Analyzer
+    </title>
 
+
+    <!-- Main CSS -->
     <link rel="stylesheet" href="style.css">
 
-    <!-- SheetJS -->
+
+    <!-- SheetJS Excel Reader/Writer -->
     <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
 
-    <!-- ExcelJS -->
+
+    <!-- ExcelJS for adding image/chart sheet -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.4.0/exceljs.min.js"></script>
+
 
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
+
+    <!-- Zoom & Pan plugin -->
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.0.1/dist/chartjs-plugin-zoom.min.js"></script>
+
+
 </head>
+
 
 <body>
 
+
 <div class="container">
 
-    <h1>Temperature Report Generator</h1>
+
+    <h1>
+        Solar Inverter Temperature Analyzer
+    </h1>
+
 
     <p class="subtitle">
-        Upload inverter temperature workbook and generate a consolidated report.
+        Upload inverter temperature data and generate temperature trend reports.
     </p>
+
+
+
+    <!-- Upload Section -->
 
     <div class="uploadBox">
 
-        <input
+
+        <label>
+            Select Excel File
+        </label>
+
+
+        <br><br>
+
+
+        <input 
             type="file"
             id="excelFile"
             accept=".xlsx,.xls"
         >
 
+
     </div>
+
+
+
+
+
+    <!-- Selection Section -->
+
 
     <div id="selectionCard" class="hidden">
 
-        <h2>Select Temperatures</h2>
+
+        <h2>
+            Select Temperature Data
+        </h2>
+
 
         <p>
-            Choose the inverter temperature series you want to plot.
+            Choose inverter temperatures to display on the graph.
         </p>
+
 
         <div id="checkboxContainer">
 
-            <!-- JavaScript generates checkboxes -->
 
         </div>
 
+
+
         <button id="generateBtn">
 
-            Generate Report
+            Generate Graph
 
         </button>
 
+
     </div>
+
+
+
+
+
+
+    <!-- Loading Section -->
+
 
     <div id="progressCard" class="hidden">
 
-        <h2>Processing Workbook...</h2>
+
+        <h2>
+            Processing...
+        </h2>
+
 
         <div class="progressBar">
 
@@ -73,17 +131,47 @@
 
         </div>
 
-        <p id="progressText">
 
-            Waiting...
+        <p id="progressText">
 
         </p>
 
+
     </div>
 
-    <div id="downloadCard" class="hidden">
 
-        <h2>Report Generated Successfully</h2>
+
+
+
+
+    <!-- Chart Preview -->
+
+
+    <div id="chartContainer" class="hidden">
+
+
+        <h2>
+            Temperature Trend
+        </h2>
+
+
+
+        <div class="chartBox">
+
+
+            <canvas id="tempChart"></canvas>
+
+
+        </div>
+
+
+
+        <button id="resetZoomBtn">
+
+            Reset Zoom
+
+        </button>
+
 
         <button id="downloadBtn">
 
@@ -91,17 +179,31 @@
 
         </button>
 
+
+
     </div>
+
+
+
+
+
 
     <div class="footer">
 
-        Temperature Report Generator
+        Solar Temperature Analysis Tool
 
     </div>
 
+
+
 </div>
 
+
+
+
+
 <script src="script.js"></script>
+
 
 </body>
 
