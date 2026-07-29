@@ -1,45 +1,77 @@
+/* =====================================================
+   Solar Inverter Temperature Analyzer
+   Main Styling
+===================================================== */
+
+
 *{
+
     margin:0;
     padding:0;
     box-sizing:border-box;
-    font-family:Segoe UI,Tahoma,Geneva,Verdana,sans-serif;
+    font-family:"Segoe UI",Arial,sans-serif;
+
 }
+
 
 body{
 
-    background:#f2f5f7;
+    background:#f2f6f7;
+
     min-height:100vh;
+
     display:flex;
+
     justify-content:center;
-    align-items:flex-start;
+
     padding:40px;
 
 }
 
+
+
+/* Main Container */
+
 .container{
 
-    width:900px;
+    width:1100px;
+
     max-width:95%;
 
     background:white;
 
-    border-radius:18px;
-
-    box-shadow:0 10px 30px rgba(0,0,0,.12);
-
     padding:40px;
 
+    border-radius:18px;
+
+    box-shadow:0 8px 25px rgba(0,0,0,0.12);
+
 }
+
+
+
+/* Headings */
 
 h1{
 
-    color:#27A5AD;
-
     text-align:center;
 
-    margin-bottom:8px;
+    color:#27A5AD;
+
+    margin-bottom:10px;
 
 }
+
+
+h2{
+
+    color:#27A5AD;
+
+    margin-bottom:15px;
+
+}
+
+
 
 .subtitle{
 
@@ -51,6 +83,10 @@ h1{
 
 }
 
+
+
+/* Upload Box */
+
 .uploadBox{
 
     border:2px dashed #27A5AD;
@@ -61,23 +97,35 @@ h1{
 
     text-align:center;
 
+    background:#fbffff;
+
     margin-bottom:30px;
 
-    transition:.3s;
+}
+
+
+
+.uploadBox label{
+
+    font-size:18px;
+
+    font-weight:600;
+
+    color:#444;
 
 }
 
-.uploadBox:hover{
 
-    background:#f8ffff;
-
-}
 
 input[type=file]{
 
-    font-size:16px;
+    padding:10px;
 
 }
+
+
+
+/* Hide Sections */
 
 .hidden{
 
@@ -85,85 +133,60 @@ input[type=file]{
 
 }
 
+
+
+/* Selection Card */
+
+
 #selectionCard{
-
-    margin-top:20px;
-
-    padding:25px;
-
-    border-radius:12px;
 
     background:#fafafa;
 
+    border-radius:15px;
+
+    padding:25px;
+
     border:1px solid #ddd;
 
 }
 
-#selectionCard h2{
 
-    margin-bottom:10px;
 
-    color:#27A5AD;
+/* Selection Table */
 
-}
 
-#checkboxContainer{
+#checkboxContainer table{
 
     margin-top:20px;
 
-    display:grid;
+}
 
-    grid-template-columns:repeat(2,1fr);
 
-    gap:12px;
+
+#checkboxContainer th{
+
+    color:#27A5AD;
+
+    font-size:16px;
 
 }
 
-.checkboxItem{
 
-    background:white;
 
-    border:1px solid #ddd;
+#checkboxContainer input{
 
-    border-radius:8px;
-
-    padding:10px;
-
-    transition:.25s;
-
-}
-
-.checkboxItem:hover{
-
-    border-color:#27A5AD;
-
-    background:#f7ffff;
-
-}
-
-.checkboxItem label{
+    transform:scale(1.3);
 
     cursor:pointer;
 
-    width:100%;
-
-    display:flex;
-
-    align-items:center;
-
-    gap:10px;
-
 }
 
-.checkboxItem input{
 
-    transform:scale(1.2);
 
-}
+/* Buttons */
+
 
 button{
-
-    margin-top:30px;
 
     background:#27A5AD;
 
@@ -171,23 +194,34 @@ button{
 
     border:none;
 
+    padding:13px 25px;
+
     border-radius:8px;
-
-    padding:14px 28px;
-
-    cursor:pointer;
 
     font-size:16px;
 
-    transition:.25s;
+    cursor:pointer;
+
+    margin-top:25px;
+
+    margin-right:10px;
+
+    transition:0.3s;
 
 }
+
+
 
 button:hover{
 
-    background:#1f8d94;
+    background:#1d858b;
 
 }
+
+
+
+/* Progress */
+
 
 #progressCard{
 
@@ -195,27 +229,29 @@ button:hover{
 
     padding:25px;
 
-    border:1px solid #ddd;
-
     border-radius:12px;
 
+    border:1px solid #ddd;
+
 }
+
+
 
 .progressBar{
 
     width:100%;
 
-    height:24px;
+    height:22px;
 
     background:#ddd;
 
-    border-radius:50px;
+    border-radius:20px;
 
     overflow:hidden;
 
-    margin-top:20px;
-
 }
+
+
 
 #progressFill{
 
@@ -225,39 +261,71 @@ button:hover{
 
     background:#27A5AD;
 
-    transition:.5s;
+    transition:0.5s;
 
 }
 
+
+
 #progressText{
 
-    margin-top:15px;
+    margin-top:10px;
 
     color:#666;
 
 }
 
-#downloadCard{
 
-    margin-top:30px;
 
-    text-align:center;
+/* Chart Section */
 
-    padding:30px;
 
-    border-radius:12px;
+#chartContainer{
+
+    margin-top:35px;
+
+    padding:25px;
+
+    border-radius:15px;
 
     border:1px solid #ddd;
 
-    background:#f9fffd;
+    background:#ffffff;
 
 }
 
+
+
+.chartBox{
+
+    width:100%;
+
+    height:550px;
+
+    margin-top:20px;
+
+}
+
+
+
+#tempChart{
+
+    width:100% !important;
+
+    height:100% !important;
+
+}
+
+
+
+/* Footer */
+
+
 .footer{
 
-    margin-top:40px;
-
     text-align:center;
+
+    margin-top:40px;
 
     color:#999;
 
@@ -265,17 +333,31 @@ button:hover{
 
 }
 
+
+
+/* Responsive */
+
+
 @media(max-width:700px){
 
-    #checkboxContainer{
 
-        grid-template-columns:1fr;
+    body{
+
+        padding:15px;
 
     }
 
+
     .container{
 
-        padding:25px;
+        padding:20px;
+
+    }
+
+
+    .chartBox{
+
+        height:350px;
 
     }
 
