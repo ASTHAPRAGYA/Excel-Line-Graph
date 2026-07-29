@@ -918,159 +918,85 @@ console.log("Graph End:",maxDate);
 
 
 
-    tempChart =
-    new Chart(
-
-        document
-        .getElementById("tempChart"),
-
-
+    tempChart = new Chart(
+        document.getElementById("tempChart"),
         {
+            type: "line",
 
-        type:"line",
-
-
-
-        data:{
-
-
-            datasets:datasets
-
-
-        },
-
-
-
-        options:{
-
-
-            responsive:true,
-
-
-            maintainAspectRatio:false,
-
-
-
-            animation:false,
-
-
-
-            interaction:{
-
-
-                mode:"nearest",
-
-                intersect:false
-
-
+            data: {
+                datasets: datasets
             },
 
+            options: {
 
+                responsive: true,
 
-            plugins:{
+                maintainAspectRatio: false,
 
+                animation: false,
 
-                legend:{
-
-
-                    position:"bottom",
-
-
-                    labels:{
-
-
-                        boxWidth:15
-
-
-                    }
-
-
+                interaction: {
+                    mode: "nearest",
+                    intersect: false
                 },
 
+                plugins: {
 
-
-                zoom:{
-
-
-                    pan:{
-
-
-                        enabled:true,
-
-                        mode:"x"
-
-
+                    legend: {
+                        position: "bottom",
+                        labels: {
+                            boxWidth: 15
+                        }
                     },
 
-
-                    zoom:{
-
-
-                        wheel:{
-
-                            enabled:true
-
+                    zoom: {
+                        pan: {
+                            enabled: true,
+                            mode: "x"
                         },
 
-                        mode:"x"
-
-
-                    }
-
-
-                }
-
-
-            },
-
-
-
-
-
-
-             scales:{
-
-                x:{
-
-                    type:"time",
-
-                    min:minDate,
-
-                    max:maxDate,
-
-                    ticks:{
-
-                        maxTicksLimit:7,
-
-                        autoSkip:true,
-
-                        source:"auto"
-
-                    },
-
-                    time:{
-
-                        unit:
-                        calculateTimeUnit(minDate,maxDate)
-
+                        zoom: {
+                            wheel: {
+                                enabled: true
+                            },
+                            mode: "x"
+                        }
                     }
 
                 },
 
 
-                y:{
+                scales: {
 
-                    title:{
+                    x: {
+                        type: "time",
 
-                        display:true,
+                        min: minDate,
 
-                        text:"Temperature (°C)"
+                        max: maxDate,
 
+                        ticks: {
+                            maxTicksLimit: 7,
+                            autoSkip: true,
+                            source: "auto"
+                        },
+
+                        time: {
+                            unit: calculateTimeUnit(minDate, maxDate)
+                        }
                     },
 
-                    ticks:{
 
-                        maxTicksLimit:8
+                    y: {
+
+                        title: {
+                            display: true,
+                            text: "Temperature (°C)"
+                        },
+
+                        ticks: {
+                            maxTicksLimit: 8
+                        }
 
                     }
 
@@ -1079,8 +1005,6 @@ console.log("Graph End:",maxDate);
             }
 
         }
-        }
-
     );
     document
     .getElementById("chartContainer")
