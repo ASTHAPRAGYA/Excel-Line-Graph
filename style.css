@@ -1,0 +1,282 @@
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Segoe UI,Tahoma,Geneva,Verdana,sans-serif;
+}
+
+body{
+
+    background:#f2f5f7;
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:flex-start;
+    padding:40px;
+
+}
+
+.container{
+
+    width:900px;
+    max-width:95%;
+
+    background:white;
+
+    border-radius:18px;
+
+    box-shadow:0 10px 30px rgba(0,0,0,.12);
+
+    padding:40px;
+
+}
+
+h1{
+
+    color:#27A5AD;
+
+    text-align:center;
+
+    margin-bottom:8px;
+
+}
+
+.subtitle{
+
+    text-align:center;
+
+    color:#666;
+
+    margin-bottom:35px;
+
+}
+
+.uploadBox{
+
+    border:2px dashed #27A5AD;
+
+    border-radius:15px;
+
+    padding:35px;
+
+    text-align:center;
+
+    margin-bottom:30px;
+
+    transition:.3s;
+
+}
+
+.uploadBox:hover{
+
+    background:#f8ffff;
+
+}
+
+input[type=file]{
+
+    font-size:16px;
+
+}
+
+.hidden{
+
+    display:none;
+
+}
+
+#selectionCard{
+
+    margin-top:20px;
+
+    padding:25px;
+
+    border-radius:12px;
+
+    background:#fafafa;
+
+    border:1px solid #ddd;
+
+}
+
+#selectionCard h2{
+
+    margin-bottom:10px;
+
+    color:#27A5AD;
+
+}
+
+#checkboxContainer{
+
+    margin-top:20px;
+
+    display:grid;
+
+    grid-template-columns:repeat(2,1fr);
+
+    gap:12px;
+
+}
+
+.checkboxItem{
+
+    background:white;
+
+    border:1px solid #ddd;
+
+    border-radius:8px;
+
+    padding:10px;
+
+    transition:.25s;
+
+}
+
+.checkboxItem:hover{
+
+    border-color:#27A5AD;
+
+    background:#f7ffff;
+
+}
+
+.checkboxItem label{
+
+    cursor:pointer;
+
+    width:100%;
+
+    display:flex;
+
+    align-items:center;
+
+    gap:10px;
+
+}
+
+.checkboxItem input{
+
+    transform:scale(1.2);
+
+}
+
+button{
+
+    margin-top:30px;
+
+    background:#27A5AD;
+
+    color:white;
+
+    border:none;
+
+    border-radius:8px;
+
+    padding:14px 28px;
+
+    cursor:pointer;
+
+    font-size:16px;
+
+    transition:.25s;
+
+}
+
+button:hover{
+
+    background:#1f8d94;
+
+}
+
+#progressCard{
+
+    margin-top:25px;
+
+    padding:25px;
+
+    border:1px solid #ddd;
+
+    border-radius:12px;
+
+}
+
+.progressBar{
+
+    width:100%;
+
+    height:24px;
+
+    background:#ddd;
+
+    border-radius:50px;
+
+    overflow:hidden;
+
+    margin-top:20px;
+
+}
+
+#progressFill{
+
+    width:0%;
+
+    height:100%;
+
+    background:#27A5AD;
+
+    transition:.5s;
+
+}
+
+#progressText{
+
+    margin-top:15px;
+
+    color:#666;
+
+}
+
+#downloadCard{
+
+    margin-top:30px;
+
+    text-align:center;
+
+    padding:30px;
+
+    border-radius:12px;
+
+    border:1px solid #ddd;
+
+    background:#f9fffd;
+
+}
+
+.footer{
+
+    margin-top:40px;
+
+    text-align:center;
+
+    color:#999;
+
+    font-size:14px;
+
+}
+
+@media(max-width:700px){
+
+    #checkboxContainer{
+
+        grid-template-columns:1fr;
+
+    }
+
+    .container{
+
+        padding:25px;
+
+    }
+
+}
