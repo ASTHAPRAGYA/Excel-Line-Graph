@@ -472,23 +472,34 @@ button:hover{
 
 /* Chart Section */
 
+/* =====================================================
+   Chart Display Area
+===================================================== */
+
+
 #chartContainer{
 
-
-    margin-top:40px;
-
-
-    padding:30px;
-
-
-    border-radius:18px;
-
-
-    border:1px solid #ddd;
-
+    margin-top:35px;
 
     background:white;
 
+    border-radius:15px;
+
+    border:1px solid #ddd;
+
+    padding:25px;
+
+    width:100%;
+
+}
+
+
+
+#chartContainer h2{
+
+    color:#27A5AD;
+
+    margin-bottom:15px;
 
 }
 
@@ -497,29 +508,23 @@ button:hover{
 
 .chartBox{
 
-
     width:100%;
 
+    height:450px;
 
-    height:600px;
-
-
-    margin-top:25px;
-
+    position:relative;
 
 }
+
 
 
 
 
 #tempChart{
 
-
     width:100% !important;
 
-
     height:100% !important;
-
 
 }
 
@@ -529,13 +534,75 @@ button:hover{
 
 
 
-/* Download Button */
+/* =====================================================
+   Graph Control Buttons
+===================================================== */
+
+
+.graphControls{
+
+    display:flex;
+
+    justify-content:center;
+
+    gap:15px;
+
+    margin-top:20px;
+
+}
+
+
+
+#generateBtn,
+#downloadBtn,
+#resetZoomBtn{
+
+
+    padding:12px 25px;
+
+    border:none;
+
+    border-radius:8px;
+
+    cursor:pointer;
+
+    font-size:15px;
+
+    font-weight:600;
+
+    transition:0.2s;
+
+}
+
+
+
+
+
+#generateBtn{
+
+    background:#27A5AD;
+
+    color:white;
+
+}
+
+
+
+#generateBtn:hover{
+
+    background:#1c8990;
+
+}
+
+
+
+
 
 #downloadBtn{
 
+    background:#198754;
 
-    background:#159447;
-
+    color:white;
 
 }
 
@@ -543,9 +610,7 @@ button:hover{
 
 #downloadBtn:hover{
 
-
-    background:#117536;
-
+    background:#146c43;
 
 }
 
@@ -553,15 +618,11 @@ button:hover{
 
 
 
-
-
-/* Reset Zoom Button */
-
 #resetZoomBtn{
 
+    background:#6c757d;
 
-    background:#666;
-
+    color:white;
 
 }
 
@@ -569,9 +630,7 @@ button:hover{
 
 #resetZoomBtn:hover{
 
-
-    background:#444;
-
+    background:#565e64;
 
 }
 
@@ -581,22 +640,72 @@ button:hover{
 
 
 
-/* Footer */
+/* =====================================================
+   Selection Table Improvements
+===================================================== */
 
-.footer{
 
+#checkboxContainer{
+
+    overflow-x:auto;
+
+}
+
+
+
+#checkboxContainer table{
+
+    width:100%;
+
+    border-collapse:collapse;
+
+    margin-top:20px;
+
+}
+
+
+
+#checkboxContainer th{
+
+    background:#27A5AD;
+
+    color:white;
+
+    padding:12px;
 
     text-align:center;
 
-
-    color:#999;
-
-
-    margin-top:40px;
+}
 
 
-    font-size:14px;
 
+#checkboxContainer td{
+
+    padding:12px;
+
+    text-align:center;
+
+    border-bottom:1px solid #ddd;
+
+}
+
+
+
+#checkboxContainer tr:hover{
+
+    background:#f3fbfb;
+
+}
+
+
+
+#checkboxContainer input[type="checkbox"]{
+
+    width:18px;
+
+    height:18px;
+
+    cursor:pointer;
 
 }
 
@@ -606,47 +715,120 @@ button:hover{
 
 
 
-/* Responsive */
+/* =====================================================
+   Upload Section
+===================================================== */
+
+
+.uploadBox{
+
+    border:2px dashed #27A5AD;
+
+    border-radius:15px;
+
+    padding:35px;
+
+    text-align:center;
+
+    background:#f9ffff;
+
+}
+
+
+
+.uploadBox input[type="file"]{
+
+    margin-top:15px;
+
+    padding:10px;
+
+}
+
+
+
+
+
+
+
+/* =====================================================
+   Main Layout
+===================================================== */
+
+
+.container{
+
+    width:1200px;
+
+    max-width:95%;
+
+    margin:auto;
+
+    padding:35px;
+
+    background:white;
+
+    border-radius:20px;
+
+    box-shadow:
+
+    0px 8px 30px rgba(0,0,0,0.12);
+
+}
+
+
+
+body{
+
+    background:#f3f7f8;
+
+    font-family:
+
+    "Segoe UI",
+    Arial,
+    sans-serif;
+
+    padding:30px;
+
+}
+
+
+
+
+
+
+
+/* =====================================================
+   Mobile View
+===================================================== */
+
 
 @media(max-width:800px){
 
 
-
     body{
 
-
-        padding:15px;
-
+        padding:10px;
 
     }
-
 
 
     .container{
 
-
-        padding:25px;
-
+        padding:20px;
 
     }
-
-
-
-    h1{
-
-
-        font-size:24px;
-
-
-    }
-
 
 
     .chartBox{
 
+        height:350px;
 
-        height:400px;
+    }
 
+
+    .graphControls{
+
+        flex-direction:column;
 
     }
 
