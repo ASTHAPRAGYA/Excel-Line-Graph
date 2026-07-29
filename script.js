@@ -1447,27 +1447,35 @@ async function exportExcelReport(){
 function convertExcelDate(value){
 
 
+    if(value instanceof Date){
+
+        return value;
+
+    }
+
+
+
     if(typeof value === "number"){
 
 
-        let date =
+        let parsed =
         XLSX.SSF.parse_date_code(value);
 
 
 
         return new Date(
 
-            date.y,
+            parsed.y,
 
-            date.m-1,
+            parsed.m-1,
 
-            date.d,
+            parsed.d,
 
-            date.H,
+            parsed.H,
 
-            date.M,
+            parsed.M,
 
-            date.S
+            parsed.S
 
         );
 
@@ -1475,7 +1483,27 @@ function convertExcelDate(value){
     }
 
 
-    return new Date(value);
+
+    if(typeof value === "string"){
+
+
+        let date =
+        new Date(value);
+
+
+
+        if(!isNaN(date.getTime())){
+
+            return date;
+
+        }
+
+
+    }
+
+
+
+    return null;
 
 
 }
