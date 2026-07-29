@@ -53,49 +53,109 @@ function loadWorkbook(event){
 
 function detectSheets(){
 
+    checkboxContainer.innerHTML="";
+    workbookData={};
+
+
     workbook.SheetNames.forEach(sheetName=>{
+
 
         const sheet = workbook.Sheets[sheetName];
 
-        const json = XLSX.utils.sheet_to_json(sheet,{
-            range:HEADER_ROW,
+
+        // Read complete sheet as rows
+        const rows = XLSX.utils.sheet_to_json(sheet,{
+            header:1,
             defval:""
         });
 
-        if(json.length===0)
-            return;
 
-        const headers = Object.keys(json[0]).map(h=>
-            h.toString().trim().toUpperCase()
-        );
+        let headerRow = -1;
 
-        const hasTime = headers.includes("TIME STAMP");
-        const hasTemp1 = headers.includes("TEMP1");
-        const hasTemp2 = headers.includes("TEMP2");
 
-        if(hasTime && hasTemp1 && hasTemp2){
+        // Search first 10 rows for headers
+        for(let i=0; i<Math.min(rows.length,10); i++){
 
-            workbookData[sheetName]=json;
+
+            const headers = rows[i].map(h=>
+
+                h.toString()
+                .trim()
+                .replace(/\s+/g,"")
+                .toUpperCase()
+
+            );
+
+
+            if(
+
+                headers.includes("TIMESTAMP") &&
+                headers.includes("TEMP1") &&
+                headers.includes("TEMP2")
+
+            ){
+
+                headerRow=i;
+                break;
+
+            }
 
         }
 
+
+
+        if(headerRow === -1){
+
+            console.log(sheetName,"Header not found");
+            return;
+
+        }
+
+
+
+        // Convert data using detected header row
+
+        const json = XLSX.utils.sheet_to_json(sheet,{
+            range:headerRow,
+            defval:""
+        });
+
+
+
+        workbookData[sheetName]=json;
+
+
+        createCheckbox(sheetName,"TEMP1");
+
+        createCheckbox(sheetName,"TEMP2");
+
+
+        console.log(
+            sheetName,
+            "Header found at Excel row",
+            headerRow+1
+        );
+
+
     });
+
+
 
     if(Object.keys(workbookData).length===0){
 
-        alert("No inverter worksheets found.");
+        alert("No valid inverter worksheets found.");
 
         return;
 
     }
 
+
     buildSelectionTable();
 
     selectionCard.classList.remove("hidden");
 
+
 }
-
-
 // ======================================================
 // Build Checkbox Table
 // ======================================================
