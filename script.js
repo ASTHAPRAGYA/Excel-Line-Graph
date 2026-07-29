@@ -1079,6 +1079,7 @@ console.log("Graph End:",maxDate);
             }
 
         }
+        }
 
     );
     document
