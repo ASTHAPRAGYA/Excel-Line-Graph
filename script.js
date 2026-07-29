@@ -743,6 +743,8 @@ function createChart(selected){
 
     let datasets=[];
 
+    let allDates=[];
+
 
 
     selected.forEach((item,index)=>{
@@ -755,28 +757,55 @@ function createChart(selected){
 
 
 
-        let dataPoints = combinedData
+        let dataPoints =
+        combinedData
         .map(row=>{
+
+
+            let date =
+            new Date(row["Time Stamp"]);
+
+
+
+            let value =
+            row[key];
+
+
+
+            if(
+
+                isNaN(date.getTime()) ||
+
+                value==="" ||
+
+                value===undefined ||
+
+                isNaN(value)
+
+            ){
+
+                return null;
+
+            }
+
+
+
+            allDates.push(date);
+
 
 
             return {
 
-                x: row["Time Stamp"],
+                x:date,
 
-                y: row[key]
+                y:Number(value)
 
             };
 
 
         })
-        .filter(point=>
+        .filter(x=>x!==null);
 
-            point.y !== "" &&
-            point.y !== null &&
-            point.y !== undefined &&
-            !isNaN(point.y)
-
-        );
 
 
 
@@ -794,10 +823,6 @@ function createChart(selected){
             colors[index % colors.length],
 
 
-            backgroundColor:
-            colors[index % colors.length],
-
-
 
             borderWidth:2,
 
@@ -805,14 +830,10 @@ function createChart(selected){
             pointRadius:0,
 
 
-            pointHoverRadius:5,
-
-
-            tension:0.15,
+            tension:0.1,
 
 
             fill:false
-
 
 
         });
@@ -820,6 +841,43 @@ function createChart(selected){
 
 
     });
+
+
+
+
+
+    if(allDates.length===0){
+
+        alert("No valid temperature data found");
+
+        return;
+
+    }
+
+
+
+
+
+
+    // Actual Excel date range only
+
+    let minDate =
+    new Date(
+        Math.min(
+            ...allDates
+        )
+    );
+
+
+
+    let maxDate =
+    new Date(
+        Math.max(
+            ...allDates
+        )
+    );
+
+
 
 
 
@@ -835,15 +893,14 @@ function createChart(selected){
 
 
 
-
-    tempChart = new Chart(
+    tempChart =
+    new Chart(
 
         document
         .getElementById("tempChart"),
 
 
         {
-
 
         type:"line",
 
@@ -869,10 +926,6 @@ function createChart(selected){
 
 
 
-            parsing:false,
-
-
-
             animation:false,
 
 
@@ -895,49 +948,13 @@ function createChart(selected){
                 legend:{
 
 
-                    position:"top"
+                    position:"bottom",
 
 
-
-                },
-
+                    labels:{
 
 
-                tooltip:{
-
-
-                    callbacks:{
-
-
-                        title:function(context){
-
-
-                            return new Date(
-                                context[0].parsed.x
-                            )
-                            .toLocaleString();
-
-
-                        },
-
-
-                        label:function(context){
-
-
-                            return (
-
-                                context.dataset.label
-                                +
-                                ": "
-                                +
-                                context.parsed.y
-                                +
-                                " °C"
-
-                            );
-
-
-                        }
+                        boxWidth:15
 
 
                     }
@@ -961,27 +978,14 @@ function createChart(selected){
                     },
 
 
-
                     zoom:{
 
 
                         wheel:{
 
-
                             enabled:true
 
-
                         },
-
-
-                        pinch:{
-
-
-                            enabled:true
-
-
-                        },
-
 
                         mode:"x"
 
@@ -996,39 +1000,53 @@ function createChart(selected){
 
 
 
+
+
+
             scales:{
 
 
+
                 x:{
+
 
 
                     type:"time",
 
 
 
-                    time:{
+                    min:minDate,
 
 
-                        tooltipFormat:
-                        "dd MMM yyyy HH:mm"
-
-
-
-                    },
+                    max:maxDate,
 
 
 
                     ticks:{
 
 
-                        maxTicksLimit:15
+                        maxTicksLimit:8,
+
+
+                        autoSkip:true
+
+
+                    },
+
+
+
+                    time:{
+
+
+                        unit:
+                        calculateTimeUnit(minDate,maxDate)
 
 
                     }
 
 
-
                 },
+
 
 
 
@@ -1041,7 +1059,6 @@ function createChart(selected){
 
                         display:true,
 
-
                         text:
                         "Temperature (°C)"
 
@@ -1049,20 +1066,14 @@ function createChart(selected){
                     },
 
 
+
                     ticks:{
 
 
-                        callback:function(value){
-
-
-                            return value+" °C";
-
-
-                        }
+                        maxTicksLimit:8
 
 
                     }
-
 
 
                 }
@@ -1073,12 +1084,12 @@ function createChart(selected){
 
 
 
+
         }
 
 
 
-    });
-
+    );
 
 
 
