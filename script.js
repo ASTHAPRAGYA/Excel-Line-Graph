@@ -1277,7 +1277,46 @@ async function exportExcelReport(){
 
 
 
+// ======================================================
+// Decide X-axis time interval
+// ======================================================
 
+function calculateTimeUnit(minDate,maxDate){
+
+
+    let hours = 
+    (
+        maxDate - minDate
+    )
+    /
+    (1000 * 60 * 60);
+
+
+
+    if(hours <= 24){
+
+        return "hour";
+
+    }
+
+
+
+    else if(hours <= 168){
+
+        return "day";
+
+    }
+
+
+
+    else{
+
+        return "day";
+
+    }
+
+
+}
 
     // --------------------------------------------------
     // Temperature Graph Worksheet
