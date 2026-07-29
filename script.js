@@ -1,6 +1,6 @@
 // ======================================================
 // Solar Inverter Temperature Analyzer
-// Complete Script
+// Complete script.js
 // ======================================================
 
 
@@ -25,11 +25,9 @@ const generateBtn = document.getElementById("generateBtn");
 
 
 
-
 // ======================================================
-// Upload Excel
+// Upload Excel File
 // ======================================================
-
 
 fileInput.addEventListener("change", function(event){
 
@@ -37,8 +35,7 @@ fileInput.addEventListener("change", function(event){
     const file = event.target.files[0];
 
 
-    if(!file)
-        return;
+    if(!file) return;
 
 
 
@@ -62,14 +59,13 @@ fileInput.addEventListener("change", function(event){
 
 
         console.log(
-            "Workbook Loaded",
+            "Workbook Loaded:",
             workbook.SheetNames
         );
 
 
 
         detectSheets();
-
 
 
     };
@@ -79,26 +75,22 @@ fileInput.addEventListener("change", function(event){
     reader.readAsArrayBuffer(file);
 
 
-
 });
 
 
 
 
 
-
-
 // ======================================================
-// Detect Sheets + Header Rows
+// Detect Worksheets
 // ======================================================
-
 
 function detectSheets(){
 
 
     workbookData = {};
 
-    checkboxContainer.innerHTML="";
+    checkboxContainer.innerHTML = "";
 
 
 
@@ -164,9 +156,7 @@ function detectSheets(){
             }
 
 
-
         }
-
 
 
 
@@ -192,7 +182,7 @@ function detectSheets(){
 
             sheetName,
 
-            "Header row:",
+            "Header found at row",
 
             headerRow+1
 
@@ -215,22 +205,20 @@ function detectSheets(){
 
 
 
-        let cleanedData =
+        let cleaned =
         cleanSheetData(rawData);
 
 
 
 
 
-        if(cleanedData.length>0){
+        if(cleaned.length>0){
 
 
-            workbookData[sheetName]=cleanedData;
+            workbookData[sheetName]=cleaned;
 
 
         }
-
-
 
 
 
@@ -248,18 +236,18 @@ function detectSheets(){
 
 
 
+
     if(
         Object.keys(workbookData).length===0
     ){
 
         alert(
-            "No inverter worksheets found."
+            "No valid inverter worksheets found."
         );
 
         return;
 
     }
-
 
 
 
@@ -272,7 +260,6 @@ function detectSheets(){
     );
 
 
-
 }
 
 
@@ -280,12 +267,9 @@ function detectSheets(){
 
 
 
-
-
 // ======================================================
-// Normalize Header Names
+// Normalize Headers
 // ======================================================
-
 
 function normalizeHeader(value){
 
@@ -306,13 +290,10 @@ function normalizeHeader(value){
 
 
 // ======================================================
-// Clean Data
-// Converts headers into standard format
+// Clean Sheet Data
 // ======================================================
 
-
 function cleanSheetData(data){
-
 
 
     return data.map(row=>{
@@ -330,31 +311,37 @@ function cleanSheetData(data){
 
 
 
-            if(clean==="TIMESTAMP"){
+            if(clean.includes("TIME")){
+
 
                 newRow["Time Stamp"]
                 =
                 row[key];
 
+
             }
 
 
 
-            else if(clean==="TEMP1"){
+            else if(clean.includes("TEMP1")){
+
 
                 newRow["TEMP1"]
                 =
                 Number(row[key]);
 
+
             }
 
 
 
-            else if(clean==="TEMP2"){
+            else if(clean.includes("TEMP2")){
+
 
                 newRow["TEMP2"]
                 =
                 Number(row[key]);
+
 
             }
 
@@ -367,14 +354,13 @@ function cleanSheetData(data){
         return newRow;
 
 
-
     })
+
     .filter(row=>
 
         row["Time Stamp"]
 
     );
-
 
 
 }
@@ -386,11 +372,9 @@ function cleanSheetData(data){
 
 
 
-
 // ======================================================
-// Build Selection Table
+// Create Selection Table
 // ======================================================
-
 
 function buildSelectionTable(){
 
@@ -399,28 +383,20 @@ function buildSelectionTable(){
 
 
 
-    let table=document.createElement("table");
+    let table =
+    document.createElement("table");
 
 
-
-    table.style.width="100%";
 
     table.innerHTML=`
 
     <tr>
 
-    <th>
-    Inverter
-    </th>
+        <th>Inverter</th>
 
-    <th>
-    TEMP1
-    </th>
+        <th>TEMP1</th>
 
-    <th>
-    TEMP2
-    </th>
-
+        <th>TEMP2</th>
 
     </tr>
 
@@ -428,39 +404,39 @@ function buildSelectionTable(){
 
 
 
-
-
     Object.keys(workbookData)
     .forEach(inv=>{
 
 
-        let row=document.createElement("tr");
+        let row =
+        document.createElement("tr");
 
 
 
         row.innerHTML=`
 
         <td>
-        ${inv}
+            ${inv}
         </td>
 
 
         <td>
 
-        <input 
-        type="checkbox"
-        value="${inv}|TEMP1">
+            <input 
+            type="checkbox"
+            value="${inv}|TEMP1">
 
         </td>
 
 
         <td>
 
-        <input 
-        type="checkbox"
-        value="${inv}|TEMP2">
+            <input
+            type="checkbox"
+            value="${inv}|TEMP2">
 
         </td>
+
 
         `;
 
@@ -471,7 +447,6 @@ function buildSelectionTable(){
 
 
     });
-
 
 
 
@@ -487,12 +462,9 @@ function buildSelectionTable(){
 
 
 
-
-
 // ======================================================
-// Get Selected Channels
+// Get Selected Temperatures
 // ======================================================
-
 
 function getSelectedSeries(){
 
@@ -505,19 +477,20 @@ function getSelectedSeries(){
     .querySelectorAll(
         "#checkboxContainer input:checked"
     )
+
     .forEach(box=>{
 
 
-        let values =
+        let value =
         box.value.split("|");
 
 
 
         selected.push({
 
-            inverter:values[0],
+            inverter:value[0],
 
-            temperature:values[1]
+            temperature:value[1]
 
         });
 
@@ -541,9 +514,8 @@ function getSelectedSeries(){
 
 
 // ======================================================
-// Generate Button
+// Generate Graph
 // ======================================================
-
 
 generateBtn.addEventListener(
 "click",
@@ -565,7 +537,6 @@ function(){
 
         return;
 
-
     }
 
 
@@ -578,9 +549,7 @@ function(){
 
 
 
-}
-
-);
+});
 
 
 
@@ -591,20 +560,17 @@ function(){
 
 
 // ======================================================
-// Create Combined Dataset
+// Create Combined Data
 // ======================================================
-
 
 function createCombinedData(){
-
 
 
     combinedData=[];
 
 
 
-    let timeSet=new Set();
-
+    let times = new Set();
 
 
 
@@ -617,11 +583,12 @@ function createCombinedData(){
         .forEach(row=>{
 
 
-            timeSet.add(
+            times.add(
 
                 new Date(
                     row["Time Stamp"]
-                ).getTime()
+                )
+                .getTime()
 
             );
 
@@ -635,9 +602,8 @@ function createCombinedData(){
 
 
 
-
-    let times =
-    Array.from(timeSet)
+    let sortedTimes =
+    Array.from(times)
     .sort(
         (a,b)=>a-b
     );
@@ -646,15 +612,15 @@ function createCombinedData(){
 
 
 
-    times.forEach(time=>{
+    sortedTimes.forEach(time=>{
 
 
-        let obj={};
+        let row={};
 
 
-        obj["Time Stamp"]=
+        row["Time Stamp"]
+        =
         new Date(time);
-
 
 
 
@@ -662,16 +628,16 @@ function createCombinedData(){
         .forEach(inv=>{
 
 
-            obj[inv+" TEMP1"]="";
+            row[inv+" TEMP1"]="";
 
-            obj[inv+" TEMP2"]="";
+            row[inv+" TEMP2"]="";
 
 
         });
 
 
 
-        combinedData.push(obj);
+        combinedData.push(row);
 
 
 
@@ -687,41 +653,42 @@ function createCombinedData(){
 
 
         workbookData[inv]
-        .forEach(row=>{
+        .forEach(data=>{
 
 
-            let t =
+            let time =
+
             new Date(
-                row["Time Stamp"]
-            ).getTime();
+                data["Time Stamp"]
+            )
+            .getTime();
+
 
 
 
             let index =
-            times.indexOf(t);
+            sortedTimes.indexOf(time);
 
 
 
 
-            if(index>=0){
+            if(index!==-1){
 
 
                 combinedData[index]
                 [inv+" TEMP1"]
                 =
-                row["TEMP1"];
+                data["TEMP1"];
 
 
 
                 combinedData[index]
                 [inv+" TEMP2"]
                 =
-                row["TEMP2"];
-
+                data["TEMP2"];
 
 
             }
-
 
 
         });
@@ -730,6 +697,12 @@ function createCombinedData(){
 
     });
 
+
+
+    console.log(
+        "Combined Data",
+        combinedData
+    );
 
 
 }
@@ -745,7 +718,6 @@ function createCombinedData(){
 // ======================================================
 // Create Chart
 // ======================================================
-
 
 function createChart(selected){
 
@@ -768,6 +740,7 @@ function createChart(selected){
 
         datasets.push({
 
+
             label:key,
 
 
@@ -775,9 +748,14 @@ function createChart(selected){
 
             combinedData.map(row=>({
 
-                x:row["Time Stamp"],
 
-                y:row[key]
+                x:
+                row["Time Stamp"],
+
+
+                y:
+                row[key]
+
 
             })),
 
@@ -801,6 +779,7 @@ function createChart(selected){
 
 
 
+
     if(tempChart){
 
         tempChart.destroy();
@@ -810,33 +789,23 @@ function createChart(selected){
 
 
 
-    let ctx =
-    document
-    .getElementById("tempChart")
-    .getContext("2d");
-
-
-
-
-
 
     tempChart =
-    new Chart(ctx,{
+    new Chart(
 
+        document
+        .getElementById("tempChart"),
+
+        {
 
         type:"line",
 
 
-
         data:{
-
 
             datasets:datasets
 
-
         },
-
-
 
 
         options:{
@@ -848,20 +817,7 @@ function createChart(selected){
             maintainAspectRatio:false,
 
 
-
             parsing:false,
-
-
-
-            interaction:{
-
-
-                mode:"nearest",
-
-                intersect:false
-
-
-            },
 
 
 
@@ -873,7 +829,6 @@ function createChart(selected){
                     position:"top"
 
                 },
-
 
 
                 zoom:{
@@ -890,15 +845,7 @@ function createChart(selected){
 
                     zoom:{
 
-
                         wheel:{
-
-                            enabled:true
-
-                        },
-
-
-                        pinch:{
 
                             enabled:true
 
@@ -907,18 +854,13 @@ function createChart(selected){
 
                         mode:"x"
 
-
                     }
-
 
 
                 }
 
 
-
             },
-
-
 
 
 
@@ -934,16 +876,14 @@ function createChart(selected){
                     time:{
 
 
-                        unit:
-                        calculateTimeUnit()
+                        tooltipFormat:
+                        "dd MMM yyyy HH:mm"
 
 
                     }
 
 
-
                 },
-
 
 
 
@@ -958,8 +898,8 @@ function createChart(selected){
                         text:
                         "Temperature (°C)"
 
-                    }
 
+                    }
 
 
                 }
@@ -980,65 +920,12 @@ function createChart(selected){
 
 
 
+
     document
     .getElementById("chartContainer")
     .classList
     .remove("hidden");
 
-
-
-}
-
-
-
-
-
-
-
-
-
-function calculateTimeUnit(){
-
-
-    if(combinedData.length===0)
-
-        return "hour";
-
-
-
-    let days =
-
-    (
-        combinedData[
-        combinedData.length-1
-        ]["Time Stamp"]
-
-        -
-
-        combinedData[0]
-        ["Time Stamp"]
-
-    )
-
-    /
-    (1000*60*60*24);
-
-
-
-
-
-    if(days<=1)
-
-        return "hour";
-
-
-    if(days<=7)
-
-        return "6hour";
-
-
-
-    return "day";
 
 
 }
